@@ -2,6 +2,17 @@ package br.kata.tdd.KataMarsRover;
 
 public class Rover {
 
+	private static final String AXIS_Y = "Y";
+	private static final String AXIS_X = "X";
+	private static final String NORTH = "N";
+	private static final String EAST = "E";
+	private static final String SOUTH = "S";
+	private static final String WEST = "W";
+	private static final char CHAR_f = 'f';
+	private static final char CHAR_r = 'r';
+	private static final char CHAR_l = 'l';
+	private static final char CHAR_b = 'b';
+
 	private Position position;
 	private Direction direction;
 	private PlanetSize planetSize;
@@ -25,107 +36,76 @@ public class Rover {
 		return planetSize;
 	}
 
-	public Direction movingLeft(String rotation) {
-		for (int i = 0; i < rotation.length(); i++) {
-			if(direction.equals(new Direction("N"))) {
-				direction = new Direction("E");
-			}else if(direction.equals(new Direction("E"))) {
-				direction = new Direction("S");
-			} else if(direction.equals(new Direction("S"))) {
-				direction = new Direction("W");
-			}else {
-				direction = new Direction("N");
-			}
+	public Direction movingLeft() {
+		if(direction.equals(new Direction(NORTH))) {
+			direction = new Direction(EAST);
+		}else if(direction.equals(new Direction(EAST))) {
+			direction = new Direction(SOUTH);
+		} else if(direction.equals(new Direction(SOUTH))) {
+			direction = new Direction(WEST);
+		}else {
+			direction = new Direction(NORTH);
 		}
 		return direction;
 	}
 
-	public Direction movingRigth(String rotation) {
-		for (int i = 0; i < rotation.length(); i++) {
-			if(direction.equals(new Direction("N"))) {
-				direction = new Direction("W");
-			}else if (direction.equals(new Direction("W"))) {
-				direction = new Direction("S");
-			}else if (direction.equals(new Direction("S"))) {
-				direction = new Direction("E");
-			}else {
-				direction = new Direction("N");
-			}
+	public Direction movingRight() {
+		if(direction.equals(new Direction(NORTH))) {
+			direction = new Direction(WEST);
+		}else if (direction.equals(new Direction(WEST))) {
+			direction = new Direction(SOUTH);
+		}else if (direction.equals(new Direction(SOUTH))) {
+			direction = new Direction(EAST);
+		}else {
+			direction = new Direction(NORTH);
 		}
 		return direction;
 	}
 
-	public Position movingFoward(String moviment) throws MovingException {
-		for (int i = 0; i < moviment.length(); i++) {
-			
-			if(direction.equals(new Direction("N"))) {
-				if(position.getY() == 0){
-					position = checkObstacle(new Position(position.getX(), planetSize.getSizeY()));
-				}else {
-					position = checkObstacle(new Position(position.getX(), position.getY() - 1));
-				}
-			}
-			else if(direction.equals(new Direction("S"))) 
-			{
-				if(position.getY() == planetSize.getSizeY()){
-					position = checkObstacle(new Position(position.getX(), 0));
-				}else {
-					position = checkObstacle(new Position(position.getX(), position.getY() + 1));
-				}
-			}
-			else if(direction.equals(new Direction("W"))) 
-			{
-				if(position.getX() == 0){
-					position = checkObstacle(new Position(planetSize.getSizeX(), position.getY()));
-				}else {
-					position = checkObstacle(new Position(position.getX() -1, position.getY()));
-				}
-			}
-			else 
-			{
-				if(position.getX() == planetSize.getSizeX()) {
-					position = checkObstacle(new Position(0, position.getY()));
-				}else {
-					position = checkObstacle(new Position(position.getX() +1, position.getY()));
-				}
-			}
-			
+	public Position movingForward() throws MovingException {
+		if(direction.equals(new Direction(NORTH))) {
+			move(0, planetSize.getSizeY(), position.getY() - 1, AXIS_Y);
+		}else if(direction.equals(new Direction(SOUTH))){
+			move(planetSize.getSizeY(), 0, position.getY() + 1, AXIS_Y);
+		}else if(direction.equals(new Direction(WEST))){
+			move(0, planetSize.getSizeX(), position.getX() - 1, AXIS_X);
+		}else{
+			move(planetSize.getSizeX(), 0, position.getX() +1, AXIS_X);
 		}
 		return position;
 	}
 
-	public Position movingbackward(String moviment) throws MovingException {
-		for (int i = 0; i < moviment.length(); i++) {
+	public Position movingBackward() throws MovingException {
+		if(direction.equals(new Direction(NORTH))) {
+			move(planetSize.getSizeY(), 0, position.getY() + 1, AXIS_Y);
+		}
+		if(direction.equals(new Direction(SOUTH))) {
+			move(0, planetSize.getSizeY(), position.getY() - 1, AXIS_Y);
+		}
+		if(direction.equals(new Direction(WEST))) {
+			move(planetSize.getSizeX(), 0, position.getX() +1, AXIS_X);
 
-			if(direction.equals(new Direction("N"))) {
-				if(position.getY() == planetSize.getSizeY()){
-					position = checkObstacle(new Position(position.getX(), 0));
-				}else {
-					position = checkObstacle(new Position(position.getX(), position.getY() + 1));
-			}
-				
-			}else if(direction.equals(new Direction("S"))) {
-				if(position.getY() == 0){
-					position = checkObstacle(new Position(position.getX(), planetSize.getSizeY()));
-				}else {
-					position = checkObstacle(new Position(position.getX(), position.getY() - 1));
-				}
-			}else if(direction.equals(new Direction("W"))) {
-				if(position.getX() == planetSize.getSizeX()){
-					position = checkObstacle(new Position(0, position.getY()));
-				}else {
-					position = checkObstacle(new Position(position.getX() +1, position.getY()));
-				}
-				
-			}else {
-				if(position.getX() == 0) {
-					position = checkObstacle(new Position(planetSize.getSizeX(), position.getY()));
-				}else {
-					position = checkObstacle(new Position(position.getX() -1, position.getY()));
-				}
-			}
+		}
+		if (direction.equals(new Direction(EAST))){
+			move(0, planetSize.getSizeX(), position.getX() -1, AXIS_X);
 		}
 		return position;
+	}
+
+	private void move(int initialPosition, Integer size, int index, String axis) throws MovingException {
+		if(axis.equals(AXIS_Y)) {
+			if (position.getY() == initialPosition) {
+				position = checkObstacle(new Position(position.getX(), size));
+			} else {
+				position = checkObstacle(new Position(position.getX(), index));
+			}
+		}else{
+			if (position.getX() == initialPosition) {
+				position = checkObstacle(new Position(size, position.getY()));
+			} else {
+				position = checkObstacle(new Position(index, position.getY()));
+			}
+		}
 	}
 
 	private Position checkObstacle(Position checkPosition) throws MovingException {
@@ -138,14 +118,14 @@ public class Rover {
 	public Position commands(String listCommands) throws MovingException {
 		for (int i = 0; i < listCommands.length(); i++) {
 			char command = listCommands.charAt(i);
-			if(command == 'f') {
-				position = movingFoward("f");
-			}else if(command == 'r') {
-				direction = movingRigth("r");
-			}else if(command == 'l') {
-				direction = movingLeft("l");
-			}else {
-				position = movingbackward("b");
+			if(command == CHAR_f) {
+				position = movingForward();
+			}else if(command == CHAR_r) {
+				direction = movingRight();
+			}else if(command == CHAR_l) {
+				direction = movingLeft();
+			}else if(command == CHAR_b){
+				position = movingBackward();
 			}
 		}
 		return position;

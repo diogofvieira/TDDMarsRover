@@ -26,6 +26,7 @@ public class RoverTest {
 	private Direction startingDirection;
 	private PlanetSize planetSize;
 	private Rover rover;
+	private String commands;
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -36,6 +37,7 @@ public class RoverTest {
 		startingDirection = new Direction("N");
 		planetSize = new PlanetSize(2, 2);
 		rover = new Rover(startingPosition, startingDirection, planetSize);
+		commands = "f";
 	}
 	
 	@Test
@@ -47,72 +49,57 @@ public class RoverTest {
 	}
 
 	@Test
-	public void testLeftRotation(){
+	public void testRoverLeftRotation(){
 
-		assertThat(rover.movingLeft("l"), equalTo(new Direction("E")));
-		assertThat(rover.movingLeft("l"), equalTo(new Direction("S")));
-		assertThat(rover.movingLeft("l"), equalTo(new Direction("W")));
-		assertThat(rover.movingLeft("l"), equalTo(new Direction("N")));
-		assertThat(rover.movingLeft("l"), equalTo(new Direction("E")));
-		assertThat(rover.movingLeft("ll"), equalTo(new Direction("W")));
-		assertThat(rover.movingLeft("ll"), equalTo(new Direction("E")));
-		assertThat(rover.movingLeft("lll"), equalTo(new Direction("N")));
-		
-	}
-	
-	@Test
-	public void testRigthRotation(){
-		
-		assertThat(rover.movingRigth("r"), equalTo(new Direction("W")));
-		assertThat(rover.movingRigth("r"), equalTo(new Direction("S")));
-		assertThat(rover.movingRigth("r"), equalTo(new Direction("E")));
-		assertThat(rover.movingRigth("r"), equalTo(new Direction("N")));
-		assertThat(rover.movingRigth("r"), equalTo(new Direction("W")));
-		assertThat(rover.movingRigth("rr"), equalTo(new Direction("E")));
-		assertThat(rover.movingRigth("rr"), equalTo(new Direction("W")));
-		assertThat(rover.movingRigth("rrr"), equalTo(new Direction("N")));
-		
-	}
-	
-	@Test
-	public void testMovingFoward() throws MovingException {
-
-		assertThat(rover.movingFoward("f"), equalTo(new Position(0, 2)));
+		assertThat(rover.movingLeft(), equalTo(new Direction("E")));
 
 	}
 	
 	@Test
-	public void testMovingBackward() throws MovingException {
-		rover.movingLeft("l");
-		rover.movingFoward("fff");
+	public void testRoverRightRotation(){
 		
-		assertThat(rover.movingbackward("b"), equalTo(new Position(2, 0)));
-	}
-	
-	@Test
-	public void testWrappingEdge() throws MovingException {
-		
-		assertThat(rover.commands("ffflfrffflfrffflfr"), equalTo(new Position(0,0)));
-		assertThat(rover.commands("bbbrblbbbrblbbbrbl"), equalTo(new Position(0,0)));
-		assertThat(rover.commands("llfffrflfffrflfffrfr"), equalTo(new Position(0,0)));
-		assertThat(rover.commands("rrbbblbrbbblbrbbblbl"), equalTo(new Position(0,0)));
-		assertThat(rover.commands("lffflfrffflfrfffrff"), equalTo(new Position(0,0)));
-		assertThat(rover.commands("lbbbrblbbbrblbbblbbll"), equalTo(new Position(0,0)));
-		assertThat(rover.commands("rfffrflfffrflffflff"), equalTo(new Position(0,0)));
-		assertThat(rover.commands("rbbbrflbbbrflbbb"), equalTo(new Position(0,2)));
+		assertThat(rover.movingRight(), equalTo(new Direction("W")));
 
 	}
 	
 	@Test
-	public void testObstacleDetection() throws MovingException{
+	public void testRoverMovingForward() throws MovingException {
 
-		Position expectedObstacle = new Position(0,1);
-		rover.setObstaclePosition(expectedObstacle);
+		assertThat(rover.movingForward(), equalTo(new Position(0, 2)));
+
+	}
+	
+	@Test
+	public void testRoverMovingBackward() throws MovingException {
+
+		assertThat(rover.movingBackward(), equalTo(new Position(0, 1)));
+
+	}
+	
+	@Test
+	public void testRoverWrappingXAxisEdge() throws MovingException {
+
+		assertThat(new Rover(new Position(0,0), new Direction("W"), new PlanetSize(2,2))
+							.commands(commands), equalTo(new Position(2,0)));
+
+	}
+
+	@Test
+	public void testRoverWrappingYAxisEdge() throws MovingException {
+
+		assertThat(rover.commands(commands), equalTo(new Position(0,2)));
+
+	}
+
+	@Test
+	public void testRoverObstacleDetectionExpected() throws MovingException{
+
+		rover.setObstaclePosition(new Position(0,2));
 		
 		exception.expect(MovingException.class);
 		exception.expectMessage("Obstacle Detected");
 		
-		assertThat(rover.commands("fff"), equalTo(new Position(0,0)));		
+		assertThat(rover.commands(commands), equalTo(new Position(0,2)));
 		
 	}
 	
