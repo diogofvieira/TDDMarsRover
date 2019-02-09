@@ -8,6 +8,10 @@ public class Direction {
 		this.direction = direction;
 	}
 
+	public String getDirection() {
+		return direction;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
