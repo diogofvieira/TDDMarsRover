@@ -2,31 +2,6 @@ package br.kata.tdd.KataMarsRover;
 
 public class Rover {
 
-    public enum CardinalDirections {
-        NORTH("W", "E", "N"),
-        EAST("N", "S", "E"),
-        SOUTH("E", "W", "S"),
-        WEST("S", "N", "W");
-
-        private String left;
-        private String right;
-        private String value;
-
-        CardinalDirections(String left, String right, String value) {
-            this.left = left;
-            this.right = right;
-            this.value = value;
-        }
-
-        public static CardinalDirections of(String value) {
-            if (value == "N") return NORTH;
-            if (value == "W") return WEST;
-            if (value == "S") return SOUTH;
-            if (value == "E") return EAST;
-            throw new IllegalArgumentException("Invalid value");
-        }
-    }
-
     private static final String AXIS_Y = "Y";
     private static final String AXIS_X = "X";
     private static final String NORTH = "N";
@@ -39,13 +14,13 @@ public class Rover {
     private static final char BACKWARDS = 'b';
 
     private Position position;
-    private CardinalDirections direction;
+    public CardinalDirectionsEnum direction;
     private PlanetSize planetSize;
     private Position obstaclePosition;
 
     public Rover(Position position, Direction direction, PlanetSize planetSize) {
         this.position = position;
-        this.direction = CardinalDirections.of(direction.getDirection());
+        this.direction = CardinalDirectionsEnum.of(direction.getDirection());
         this.planetSize = planetSize;
     }
 
@@ -58,12 +33,8 @@ public class Rover {
     }
 
     public Position execute(String commands) throws MovingException {
-        // loop commands
-        // execute each
-
         for (int i = 0; i < commands.length(); i++) {
             char command = commands.charAt(i);
-
             if (command == FORWARD) {
                 position = movingForward();
             } else if (command == RIGHT) {
@@ -86,11 +57,11 @@ public class Rover {
     }
 
     private void movingLeft() {
-        this.direction = CardinalDirections.of(this.direction.left);
+        this.direction = CardinalDirectionsEnum.of(this.direction.left);
     }
 
     private void movingRight() {
-        this.direction = CardinalDirections.of(this.direction.right);
+        this.direction = CardinalDirectionsEnum.of(this.direction.right);
     }
 
     private Position movingForward() throws MovingException {
